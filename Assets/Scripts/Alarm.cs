@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
 
-public class SignalofEnter : MonoBehaviour
+public class Alarm : MonoBehaviour
 {
    [SerializeField] private float _step = 0.07f;
    private AudioSource _audioSource;
@@ -18,46 +18,50 @@ public class SignalofEnter : MonoBehaviour
 
    private void OnTriggerEnter2D(Collider2D collision)
    {
+      float purpose = 1f;
+
       if (collision.TryGetComponent<Player>(out Player player))
       {
          _audioSource.Play();
+
          if (_decriase != null)
          {
             StopCoroutine(_decriase);
          }
-         _incriase = StartCoroutine(IncreaseVolume());
+         _incriase = StartCoroutine(IncreaseVolume(purpose));
       }
    }
+
    private void OnTriggerExit2D(Collider2D collision)
    {
+      float purpose = 0f;
+
       if (collision.TryGetComponent<Player>(out Player player))
       {
          StopCoroutine(_incriase);
-         _decriase = StartCoroutine(DeacreaseVolume());
+         _decriase = StartCoroutine(IncreaseVolume(purpose));
       }
    }
 
-   private IEnumerator IncreaseVolume()
+   private IEnumerator IncreaseVolume(float purpose)
    {
       var wait = new WaitForSeconds(0.2F);
-      float purpose = 1f;
 
-      while (_audioSource.volume < 1)
+      if (purpose == 1)
       {
-         _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, purpose, _step);
-         yield return wait;
+         while (_audioSource.volume < purpose)
+         {
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, purpose, _step);
+            yield return wait;
+         }
       }
-   }
-
-   private IEnumerator DeacreaseVolume()
-   {
-      var wait = new WaitForSeconds(0.2F);
-      float purpose = 0f;
-
-      while (_audioSource.volume > 0)
+      if (purpose == 0)
       {
-         _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, purpose, _step);
-         yield return wait;
+         while (_audioSource.volume > purpose)
+         {
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, purpose, _step);
+            yield return wait;
+         }
       }
    }
 }
