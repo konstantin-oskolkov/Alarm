@@ -18,7 +18,7 @@ public class Alarm : MonoBehaviour
 
    private void OnTriggerEnter2D(Collider2D collision)
    {
-      float purpose = 1f;
+      float target = 1f;
 
       if (collision.TryGetComponent<Player>(out Player player))
       {
@@ -28,38 +28,39 @@ public class Alarm : MonoBehaviour
          {
             StopCoroutine(_decriase);
          }
-         _incriase = StartCoroutine(IncreaseVolume(purpose));
+         _incriase = StartCoroutine(IncreaseVolume(target));
       }
    }
 
    private void OnTriggerExit2D(Collider2D collision)
    {
-      float purpose = 0f;
+      float target = 0f;
 
       if (collision.TryGetComponent<Player>(out Player player))
       {
          StopCoroutine(_incriase);
-         _decriase = StartCoroutine(IncreaseVolume(purpose));
+         _decriase = StartCoroutine(IncreaseVolume(target));
       }
    }
 
-   private IEnumerator IncreaseVolume(float purpose)
+   private IEnumerator IncreaseVolume(float target)
    {
       var wait = new WaitForSeconds(0.2F);
+      float purpose = 1f;
 
-      if (purpose == 1)
+      if (target == purpose)
       {
-         while (_audioSource.volume < purpose)
+         while (_audioSource.volume < target)
          {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, purpose, _step);
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, target, _step);
             yield return wait;
          }
       }
-      if (purpose == 0)
+      if (target == 0)
       {
-         while (_audioSource.volume > purpose)
+         while (_audioSource.volume > target)
          {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, purpose, _step);
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, target, _step);
             yield return wait;
          }
       }
