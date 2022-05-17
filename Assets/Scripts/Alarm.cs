@@ -7,9 +7,10 @@ using UnityEngine;
 public class Alarm : MonoBehaviour
 {
    [SerializeField] private float _step = 0.07f;
+   [SerializeField] private float _wait = 0.2f;
+
    private AudioSource _audioSource;
-   private Coroutine _incriase;
-   private Coroutine _decriase;
+   private Coroutine _volume;
 
    private void Start()
    {
@@ -24,11 +25,11 @@ public class Alarm : MonoBehaviour
       {
          _audioSource.Play();
 
-         if (_decriase != null)
+         if (_volume != null)
          {
-            StopCoroutine(_decriase);
+            StopCoroutine(_volume);
          }
-         _incriase = StartCoroutine(IncreaseVolume(target));
+         _volume = StartCoroutine(ChangeVolume(target));
       }
    }
 
@@ -38,31 +39,18 @@ public class Alarm : MonoBehaviour
 
       if (collision.TryGetComponent<Player>(out Player player))
       {
-         StopCoroutine(_incriase);
-         _decriase = StartCoroutine(IncreaseVolume(target));
+         StopCoroutine(_volume);
+         _volume = StartCoroutine(ChangeVolume(target));
       }
    }
 
-   private IEnumerator IncreaseVolume(float target)
+   private IEnumerator ChangeVolume(float target)
    {
-      var wait = new WaitForSeconds(0.2F);
-      float purpose = 1f;
-
-      if (target == purpose)
+      while (_audioSource.volume != target)
       {
-         while (_audioSource.volume < target)
-         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, target, _step);
-            yield return wait;
-         }
+         _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, target, _step);
+         yield return new WaitForSeconds(_wait);
       }
-      if (target == 0)
-      {
-         while (_audioSource.volume > target)
-         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, target, _step);
-            yield return wait;
-         }
-      }
+      yield break;
    }
 }

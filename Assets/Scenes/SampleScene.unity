@@ -588,6 +588,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _step: 0.07
+  a: 0
 --- !u!61 &2108633684
 BoxCollider2D:
   m_ObjectHideFlags: 0
